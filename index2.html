@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Phaser Basic Project Template</title>
+	<script src="src/phaser.min.js"></script>
+</head>
+<body>
+
+<div id="gameContainer"></div>
+
+<script type="text/javascript">
+
+window.onload = function() {
+
+	var game = new Phaser.Game(800,600,Phaser.AUTO,'exemplo', {preload:preload, create:create, update:update});
+
+	var sprite1, sprite2, fundo, bullets, fireRate = 100, nextFire = 0;
+
+	function preload() {
+		game.load.image('bola1', 'bola1.png');
+		game.load.image('bola2', 'bola2.png');
+		game.load.image('tilesprite', 'starfield.jpg');
+		game.load.image('bullet', 'purple_ball.png');
+	}
+
+	function create() {
+
+		game.stage.backgroundColor = '#cecece';
+		game.world.setBounds(0,0,1400,1400);
+
+		fundo = game.add.tileSprite(0,0,1400,1400,'tilesprite');
+
+		bullets = game.add.group();
+		bullets.createMultiple(50, 'bullet');
+		bullets.setAll('anchor.x', 0.5);
+		bullets.setAll('anchor.y', 0.5);
+		bullets.setAll('outOfBoundsKill', true);
+
+		sprite1 = game.add.sprite(200,300,'bola1');
+		sprite1.anchor.setTo(0.5,0.5);
+		sprite1.body.bounce.setTo(1,1);
+		sprite1.body.mass = 4;
+		sprite1.body.velocity.setTo(10+Math.random()*40,10+Math.random()*40);
+
+		game.camera.follow(sprite1);
+
+		sprite2 = game.add.sprite(500,300,'bola2');
+		sprite2.anchor.setTo(0.5,0.5);
+		sprite2.body.bounce.setTo(1,1);
+		sprite2.body.mass = 8;
+		sprite2.body.velocity.setTo(10+Math.random()*40,10+Math.random()*40);
+		
+	}
+
+	function update() {
+		
+	//	sprite1.rotation = game.physics.accelerateToPointer(sprite1, this.game.input.activePointer, 10);
+
+		if (game.input.activePointer.isDown) {
+			fire();
+		}
+
+		game.physics.collide(sprite1, sprite2);
+
+	}
+
+	function fire() {
+
+		if (game.time.now > nextFire && bullets.countDead() > 0) {
+			nextFire = game.time.now + fireRate;
+			var bullet = bullets.getFirstDead();
+			bullet.reset(sprite1.x, sprite1.y);
+			bullet.rotation = game.physics.moveToPointer(bullet, 300);
+
+			var distance = 100;
+			var angulo = game.physics.angleToPointer(sprite1);
+			var nvx = Math.cos(angulo) * distance;
+			var nvy = Math.sin(angulo) * distance;
+			game.physics.accelerateToXY(sprite1, sprite1.x-nvx, sprite1.y-nvy, 20);
+		}
+
+	}
+
+};
+
+</script>
+
+</body>
+</html>

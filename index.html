@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Phaser Basic Project Template</title>
+	<script src="src/phaser.min.js"></script>
+</head>
+<body>
+
+<div id="gameContainer"></div>
+
+<script type="text/javascript">
+
+window.onload = function() {
+
+	var game = new Phaser.Game(800,600,Phaser.AUTO,'exemplo', {preload:preload, create:create, update:update});
+
+	function preload() {
+		game.load.image('bola1', 'bola1.png');
+		game.load.image('bola2', 'bola2.png');
+	}
+
+	var sprite1, sprite2;
+
+	function create() {
+		game.stage.backgroundColor = '#cecece';
+
+		sprite1 = game.add.sprite(50,50,'bola1');
+		sprite1.name = 'bola1';
+		sprite1.body.velocity.x = 100;
+		sprite1.body.velocity.y = 100;
+
+		sprite2 = game.add.sprite(700,200,'bola2');
+		sprite2.name = 'bola2';
+		sprite2.body.mass = 10;
+		sprite2.body.velocity.x = -100;
+		sprite2.body.velocity.y = 100;
+	}
+
+	function update() {
+		game.physics.collide(sprite1,sprite2,collisionHandler,null, this);
+	}
+
+	function collisionHandler() {
+		sprite2.body.velocity.x = 100;
+		sprite1.body.velocity.x = -100;
+		alert("bateu");
+	}
+
+};
+
+</script>
+
+</body>
+</html>
